@@ -20,9 +20,7 @@
 
     <div class="details-page-content">
       <div class="details-page-content-text">
-        <TextContent>
-          <p>{{ opportunity.description }}</p>
-        </TextContent>
+        <TextContent v-html="convertedDescription" />
       </div>
       <div class="details-page-content-text">
         <TextContent>
@@ -41,18 +39,24 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import {ref, onMounted, computed} from "vue";
 import { useRouter, useRoute } from "vue-router";
 import AppCard from "./AppCard.vue";
 import BackButton from "./BackButton.vue";
 import TextContent from "./TextContent.vue";
 import {getOpportunityByUuid} from "@/apiClient";
+import MarkdownIt from "markdown-it";
 
 const router = useRouter();
 const route = useRoute();
 
 const opportunity = ref({});
 
+const md = new MarkdownIt();
+
+const convertedDescription = computed(() => {
+  return opportunity.value.description ? md.render(opportunity.value.description) : '';
+});
 const goBack = () => {
   router.back();
 };
