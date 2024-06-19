@@ -69,4 +69,23 @@ const router = createRouter({
   routes,
 });
 
+
+const securedRoutes = [
+  '/moderator/opportunities',
+];
+
+router.beforeEach((to, from, next) => {
+  const isAuthenticated = localStorage.getItem("jwtToken"); // TODO: review, is not secure
+  const isSecuredRoute = securedRoutes.includes(to.path);
+  // console.log(`Navigating to: ${to.path}, isAuthenticated: ${isAuthenticated}, isPublicPage: ${isPublicPage}`);
+  if (isSecuredRoute && !isAuthenticated) {
+    // TODO: consider showing 403 page
+    next('/moderator/sign-in');
+  } else if (isAuthenticated && to.path === '/moderator/sign-in') {
+    next('/moderator/opportunities');
+  } else {
+    next();
+  }
+});
+
 export default router;
